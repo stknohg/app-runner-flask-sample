@@ -1,0 +1,29 @@
+# Flask
+
+* https://flask.palletsprojects.com/
+* https://github.com/pallets/flask/blob/main/LICENSE.rst
+
+# boto3
+
+* https://aws.amazon.com/sdk-for-python/
+* https://github.com/boto/boto3/blob/develop/LICENSE
+
+# psycopg2
+
+* https://www.psycopg.org/
+* https://github.com/psycopg/psycopg2/blob/master/LICENSE
+
+# Simple.css
+
+* https://simplecss.org/
+* https://github.com/kevquirk/simple.css/blob/main/LICENSE
+
+# Prism
+
+* https://prismjs.com/
+* https://github.com/PrismJS/prism/blob/master/LICENSE
+
+# gunicorn
+
+* https://gunicorn.org/
+* https://github.com/benoitc/gunicorn/blob/master/LICENSE

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>DynamoDB Employee テーブルの内容</h3>
+<table>
+    <thead>
+        <tr><th>LoginAlias</th><th>FirstName</th><th>LastName</th><th>Skills</th></tr>
+    </thead>
+    <tbody>
+        {% for employee in employees %}
+        <tr><td>{{ employee.LoginAlias }}</td><td>{{ employee.FirstName }}</td><td>{{ employee.LastName }}</td><td>{{ employee.Skills }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

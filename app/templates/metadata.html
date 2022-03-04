@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block head_addon %}
+<link rel="stylesheet" href="/static/prism.min.css">
+<script src="/static/prism.min.js"></script>
+{% endblock %}
+{% block body %}
+<h3>ECSタスクメタデータ</h3>
+<form action="/metadata/" method="POST">
+    <label>Base URL: {{ base_url }}</label><p>
+    <label>Path: </label><input name="path" value="{{ path }}"></input>
+    <button type="submit">Send</button>
+</form>
+{% if metadata %}
+<h4>Result<h4></h4>
+<pre class="line-numbers">
+<code class="language-json">{{ metadata }}</code>
+</pre>
+{% endif %}
+{% endblock %}

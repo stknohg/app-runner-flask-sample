@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/simple.min.css">
+    {% block head_addon %}
+    {% endblock %}
+    <title>テスト</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/variables/">Variables</a>
+            <a href="/metadata/">Metadata</a>
+            <a href="/dynamodb/">DynamoDB</a>
+            <a href="/rds/">RDS for PostgreSQL</a>
+            <a href="https://github.com/stknohg/app-runner-flask-sample">GitHub</a>
+        </nav>
+        <h1>テスト用サイト</h1>
+    </header>
+    <main>
+        {% block body %}
+        {% endblock %}
+    </main>
+    <footer>
+        <p>このサイトでは<a href="https://simplecss.org">Simple.css</a>を使っています。</p>
+      </footer>
+</html>

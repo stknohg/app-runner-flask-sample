@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>pg_stat_activity テーブルの内容</h3>
+<table>
+    <thead>
+        <tr><th>pid</th><th>backend_type</th><th>datname</th><th>application_name</th><th>client_addr</th><th>client_port</th><th>state</th></tr>
+    </thead>
+    <tbody>
+        {% for session in sessions %}
+        <tr><td>{{ session.pid }}</td><td>{{ session.backend_type }}</td><td>{{ session.datname }}</td><td>{{ session.application_name }}</td><td>{{ session.client_addr }}</td><td>{{ session.client_port }}</td><td>{{ session.state }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
