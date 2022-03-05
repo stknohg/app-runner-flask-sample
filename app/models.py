@@ -18,10 +18,7 @@ def get_ecs_task_metadata_base_url():
     """
     タスクメタデータのURLを取得
     """
-    try:
-        return os.environ["ECS_CONTAINER_METADATA_URI_V4"]
-    except:
-        return ""
+    return os.getenv('ECS_CONTAINER_METADATA_URI_V4', '')
 
 
 def get_ecs_task_metadata(base_url, path):
@@ -40,11 +37,12 @@ def get_ecs_task_metadata(base_url, path):
     except Exception as e:
         return e
 
+
 def get_dynamodb_employees():
     """
     DynamoDBからサンプルデータを取得
     """
-    dynamodb = boto3.resource('dynamodb', region_name='ap-northeast-1')
+    dynamodb = boto3.resource('dynamodb', region_name=os.getenv('AWS_DEFAULT_REGION', 'ap-northeast-1'))
     # NoSQL WorkBenchのサンプルデータを取得
     #  * https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/workbench.SampleModels.html#workbench.SampleModels.EmployeeDataModel
     table = dynamodb.Table('Employee')
@@ -55,7 +53,7 @@ def get_postgres_connection():
     """
     RDS for PostgreSQLへ接続
     """
-    return psycopg2.connect(os.environ['POSTGRES_URL'])
+    return psycopg2.connect(os.getenv('POSTGRES_URL', ''))
 
 
 def get_pg_stat_activity():
