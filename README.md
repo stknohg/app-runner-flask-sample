@@ -59,6 +59,14 @@ $env:AWS_PROFILE="<your AWS profile>"
 $accountId = aws sts get-caller-identity --query "Account" --output text
 $region = aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]'
 
+# Define utility filter to escape JSON
+filter EscapeJson {
+    if ($PSNativeCommandArgumentPassing -in ('Windows', 'Standard')) {
+        return $_
+    }
+    return $_ -replace '"','\"'
+}
+
 # Create IAM Role for ECR access
 $policyDocument = @"
 {
@@ -73,7 +81,7 @@ $policyDocument = @"
     }
   ]
 }
-"@ -replace '"','\"'
+"@ | EscapeJson
 aws iam create-role --role-name 'AppRunnerECRAccessRole' --path '/service-role/' --assume-role-policy-document $policyDocument
 aws iam attach-role-policy --role-name 'AppRunnerECRAccessRole' --policy-arn 'arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess'
 
@@ -91,7 +99,7 @@ $policyDocument = @"
     }
   ]
 }
-"@ -replace '"','\"'
+"@ | EscapeJson
 aws iam create-role --role-name 'my-flask-app-task-role' --assume-role-policy-document $policyDocument
 $inlinePolicy = @"
 {
@@ -112,13 +120,14 @@ $inlinePolicy = @"
     }
   ]
 }
-"@ -replace '"','\"'
+"@ | EscapeJson
 aws iam put-role-policy --role-name 'my-flask-app-task-role' --policy-name 'my-flask-app-task-policy' --policy-document $inlinePolicy
 
 # Create App Runner service (exclude PostgreSQL and DynamoDB configurations)
+$serviceName = 'my-flask-app'
 $params = @"
 {
-  "ServiceName": "my-flask-app",
+  "ServiceName": "${serviceName}",
   "SourceConfiguration": {
     "AuthenticationConfiguration": {
       "AccessRoleArn": "arn:aws:iam::${accountId}:role/service-role/AppRunnerECRAccessRole"
@@ -136,15 +145,15 @@ $params = @"
     "AutoDeploymentsEnabled": false
   },
   "InstanceConfiguration": {
-    "Cpu": "1 vCPU",
-    "Memory": "2 GB",
+    "Cpu": "0.25 vCPU",
+    "Memory": "0.5 GB",
     "InstanceRoleArn": "arn:aws:iam::${accountId}:role/my-flask-app-task-role"
   }
 }
-"@ -replace '"','\"'
+"@ | EscapeJson
 aws apprunner create-service --cli-input-json $params
 
 # Start deployment
-$serviceArn = aws apprunner list-services --query 'ServiceSummaryList[?ServiceName==`my-flask-app`].ServiceArn' --output text
+$serviceArn = aws apprunner list-services --query "ServiceSummaryList[?ServiceName==``${serviceName}``].ServiceArn" --output text
 aws apprunner start-deployment --service-arn $serviceArn
 ```
