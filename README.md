@@ -4,11 +4,10 @@
 
 ```powershell
 # for PowerShell 
-$env:FLASK_ENV="development"
 $env:FLASK_APP="./app/app.py"
 $env:AWS_PROFILE="<your AWS profile>"
 $env:POSTGRES_URL="<your PostgreSQL connection URL>"
-flask run --host=0.0.0.0 --port=5000
+flask run --host=0.0.0.0 --port=5000 --debug
 ```
 
 ## How to create docker image
