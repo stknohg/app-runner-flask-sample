@@ -1,4 +1,5 @@
 import sys
+from importlib.metadata import version
 from flask import Flask, render_template, request
 from models import *
 
@@ -7,7 +8,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template('index.html', message="Classmethod", python_version=sys.version)
+    return render_template('index.html', message="Classmethod", python_version=sys.version, flask_version=version("flask"), boto3_version=version("boto3"))
 
 
 @app.route("/variables/")

@@ -2,7 +2,9 @@
 {% block body %}
 <h2>Hello, {{ message }}!</h2>
 <details>
-    <summary>Show Python version</summary>
+    <summary>Show version</summary>
     <p>Python: {{ python_version }}</p>
+    <p>Flask: {{ flask_version }}</p>
+    <p>boto3: {{ boto3_version }}</p>
 </details>
 {% endblock %}
