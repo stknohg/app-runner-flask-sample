@@ -1,4 +1,10 @@
 {% extends "base.html" %}
 {% block body %}
-<p>Hello, <b>{{ message }}</b>!</p>
+<h2>Hello, {{ message }}!</h2>
+<details>
+    <summary>Show version</summary>
+    <p>Python: {{ python_version }}</p>
+    <p>Flask: {{ flask_version }}</p>
+    <p>boto3: {{ boto3_version }}</p>
+</details>
 {% endblock %}
