@@ -1,3 +1,4 @@
+import sys
 from flask import Flask, render_template, request
 from models import *
 
@@ -6,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template('index.html', message="Classmethod")
+    return render_template('index.html', message="Classmethod", python_version=sys.version)
 
 
 @app.route("/variables/")

@@ -1,4 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
-<p>Hello, <b>{{ message }}</b>!</p>
+<h2>Hello, {{ message }}!</h2>
+<details>
+    <summary>Show Python version</summary>
+    <p>Python: {{ python_version }}</p>
+</details>
 {% endblock %}
