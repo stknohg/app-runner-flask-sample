@@ -2,11 +2,13 @@
 
 * [For PowerShell user](./README_PowerShell.md)
 
-If you only need the result, run the following commands in AWS CloudShell.
+If you only need the result, run the following commands in AWS CloudShell with Docker support.
+
+* [AWS CloudShell : Supported Regions for Docker](https://docs.aws.amazon.com/cloudshell/latest/userguide/supported-aws-regions.html#docker-regions)
 
 ```bash
 #
-# Show AWS CloudShell
+# Start AWS CloudShell
 #
 
 # 1. Create ECR repository
