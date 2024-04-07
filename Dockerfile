@@ -4,7 +4,7 @@ ARG APP_DIR="/app"
 #
 # Build image
 #
-FROM python:3.11-slim AS build-env
+FROM python:3.11-slim-bookworm AS build-env
 ARG APP_DIR
 
 # Setup gunicorn
