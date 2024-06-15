@@ -13,6 +13,11 @@
 * https://www.psycopg.org/
 * https://github.com/psycopg/psycopg2/blob/master/LICENSE
 
+# dnspython
+
+* https://www.dnspython.org/
+* https://github.com/rthalley/dnspython/blob/main/LICENSE
+
 # Simple.css
 
 * https://simplecss.org/
