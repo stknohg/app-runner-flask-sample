@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>DNS設定</h3>
+<label>Name servers:</label>
+<pre>
+{{ name_servers }}
+</pre>
+<label>resolv.conf:</label>
+<pre>
+{{ resolv_conf }}
+</pre>
+<form action="/dns/" method="POST">
+    <label>Lookup: </label><input name="hostname" value="{{ hostname }}"></input><input name="record_type" value="{{ record_type }}" size="4"></input>
+    <button type="submit">Send</button>
+</form>
+{% if lookup_result %}
+<h4>Result</h4>
+<pre>
+{{ lookup_result }}
+</pre>
+{% endif %}
+{% endblock %}

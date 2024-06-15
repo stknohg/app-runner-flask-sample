@@ -17,6 +17,20 @@ def variables():
     return render_template('variables.html', variables=variables)
 
 
+@app.route("/dns/", methods=["GET", "POST"])
+def dns():
+    name_servers = get_dns_name_servers()
+    resolv_conf = get_resolv_conf()
+    hostname = "dev.classmethod.jp"
+    record_type = "A"
+    lookup_result = ""
+    if request.method == "POST":
+        hostname = request.form["hostname"]
+        record_type = request.form["record_type"]
+        lookup_result = execute_dns_query(hostname, record_type) 
+    return render_template('dns.html', name_servers=name_servers, resolv_conf=resolv_conf, hostname=hostname, record_type=record_type, lookup_result=lookup_result)
+
+
 @app.route("/metadata/", methods=["GET", "POST"])
 def metadata():
     base_url = get_ecs_task_metadata_base_url()
