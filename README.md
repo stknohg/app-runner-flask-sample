@@ -1,6 +1,7 @@
 # Sample Flask application for AWS App Runner
 
 * [For PowerShell user](./README_PowerShell.md)
+* [For Nushell user](./README_Nushell.md)
 
 If you only need the result, run the following commands in AWS CloudShell with Docker support.
 
