@@ -1,6 +1,7 @@
 import os
 import requests
 import json
+import dns.resolver
 import boto3
 import psycopg2
 import psycopg2.extras
@@ -37,6 +38,40 @@ def get_ecs_task_metadata(base_url, path):
     except Exception as e:
         return e
 
+
+def get_dns_name_servers():
+    """
+    コンテナローカルのDNSサーバーを取得
+    """
+    resolver = dns.resolver.Resolver()
+    try:
+        return resolver.nameservers
+    except Exception as e:
+        return e
+    
+def get_resolv_conf():
+    """
+    resolv.confの中身を取得
+    """
+    file_path = "/etc/resolv.conf"
+    if not os.path.isfile(file_path):
+        return str.format("'{}' was not found.", file_path)
+    with open(file_path) as f:
+        return f.read()
+
+
+def execute_dns_query(hostname, record_type):
+    """
+    コンテナローカルから正引きで名前解決を行う
+    """
+    resolver = dns.resolver.Resolver()
+    try:
+        answers = resolver.query(hostname, record_type)
+        return [str(rdata) for rdata in answers]
+    except (dns.resolver.NoAnswer):
+        return "No answer."
+    except Exception as e:
+        return e
 
 def get_dynamodb_employees():
     """
