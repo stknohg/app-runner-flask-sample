@@ -16,7 +16,7 @@ If you only need the result, run the following commands in AWS CloudShell with D
 aws ecr create-repository --repository-name 'my-flask-app'
 
 # 2. Create docker image
-git clone https://github.com/stknohg/app-runner-flask-sample.git
+git clone https://github.com/stknohg/app-runner-flask-sample.git --depth 1
 cd ./app-runner-flask-sample/
 docker build -t my-flask-app .
 
