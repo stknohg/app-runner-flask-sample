@@ -1,6 +1,17 @@
-# [Nushell] Sample Flask application for AWS App Runner
+# [Nushell] Development
 
-* [For Bash user](./README.md)
+* [For Bash user](./DEVELOPMENT.md)
+
+> [!NOTE]
+> Tested on Nushell 0.99.1.
+
+## How to upgrade requirements
+
+```powershell
+# Nushell
+uv pip compile ./app/requirements.in -o ./app/requirements.txt --upgrade
+uv pip sync ./app/requirements.txt
+```
 
 ## How to start local server
 

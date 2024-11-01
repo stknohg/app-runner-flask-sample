@@ -1,6 +1,14 @@
-# [PowerShell] Sample Flask application for AWS App Runner
+# [PowerShell] Development
 
-* [For Bash user](./README.md)
+* [For Bash user](./DEVELOPMENT.md)
+
+## How to upgrade requirements
+
+```powershell
+# PowerShell
+uv pip compile ./app/requirements.in -o ./app/requirements.txt --upgrade
+uv pip sync ./app/requirements.txt
+```
 
 ## How to start local server
 
