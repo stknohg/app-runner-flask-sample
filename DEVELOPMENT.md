@@ -7,6 +7,8 @@
 
 * Python 3.11
 * [uv](https://github.com/astral-sh/uv) +0.4.29
+* Docker
+* AWS CLI v2
 
 ## How to upgrade requirements
 
