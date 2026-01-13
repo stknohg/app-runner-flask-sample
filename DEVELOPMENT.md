@@ -5,8 +5,8 @@
 
 ## Prerequisites
 
-* Python 3.11
-* [uv](https://github.com/astral-sh/uv) +0.4.29
+* Python 3.14
+* [uv](https://github.com/astral-sh/uv) +0.9.18
 * Docker
 * AWS CLI v2
 
