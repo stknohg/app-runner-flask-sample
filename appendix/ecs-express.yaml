@@ -1,0 +1,191 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template for ECS Express Mode.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Set your application configurations.
+        Parameters:
+          - ClusterName
+          - Servicename
+          - ECRRepositoryName
+Parameters:
+  ClusterName:
+    Description: "Your ECR cluster name"
+    Type: String
+    Default: "my-cluster-express"
+  Servicename:
+    Description: "Your ECR cluster name"
+    Type: String
+    Default: "my-flask-app-express"
+  ECRRepositoryName:
+    Description: "Your ECR Repository name"
+    Type: String
+    Default: "my-flask-app"
+Resources:
+  # SSM Parameter Store for RDS for PostgreSQL
+  RDSPostgreSQLParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name:
+        Fn::Sub: "/${Servicename}/RDSPostgreSQL"
+      DataType: text
+      Type: String
+      Value: "TODO:UPDATE postgresql://postgres:password@localhost:5432/postgres"
+
+  # IAM Role for ECS Express infrastructure
+  ECSExpressInfraRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: "${Servicename}-infra-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ecs.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+            Condition:
+              ArnLike:
+                "aws:SourceArn":
+                  Fn::Sub: "arn:${AWS::Partition}:ecs:*:${AWS::AccountId}:*"
+              StringEquals:
+                "aws:SourceAccount":
+                  Fn::Sub: "${AWS::AccountId}"
+      Path: "/"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonECSInfrastructureRoleforExpressGatewayServices"
+
+  # IAM Role for ECS Express task execution : ECR, Secrets
+  ECSExpressTaskExecutionPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName:
+        Fn::Sub: "${Servicename}-task-execution-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "SSMParameter"
+            Effect: Allow
+            Action:
+              - "ssm:GetParameters"
+            Resource:
+              Fn::Sub: "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Servicename}/*"
+  ECSExpressTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: "${Servicename}-task-execution-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ecs-tasks.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+            Condition:
+              ArnLike:
+                "aws:SourceArn":
+                  Fn::Sub: "arn:${AWS::Partition}:ecs:${AWS::Region}:${AWS::AccountId}:*"
+              StringEquals:
+                "aws:SourceAccount":
+                  Fn::Sub: "${AWS::AccountId}"
+      Path: "/"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+        - Ref: ECSExpressTaskExecutionPolicy
+
+  # IAM Role for ECS Express task : ECS Exec, DynamoDB
+  ECSExpressTaskPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName:
+        Fn::Sub: "${Servicename}-task-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "ECSExec"
+            Effect: Allow
+            Action:
+              - "ssmmessages:CreateControlChannel"
+              - "ssmmessages:CreateDataChannel"
+              - "ssmmessages:OpenControlChannel"
+              - "ssmmessages:OpenDataChannel"
+            Resource: "*"
+          - Sid: "DynamoDB"
+            Effect: Allow
+            Action:
+              - "dynamodb:BatchGetItem"
+              - "dynamodb:GetShardIterator"
+              - "dynamodb:GetItem"
+              - "dynamodb:Scan"
+              - "dynamodb:Query"
+              - "dynamodb:GetRecords"
+            Resource:
+              Fn::Sub: "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/Employee"
+  ECSExpressTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: "${Servicename}-task-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ecs-tasks.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+            Condition:
+              ArnLike:
+                "aws:SourceArn":
+                  Fn::Sub: "arn:${AWS::Partition}:ecs:${AWS::Region}:${AWS::AccountId}:*"
+              StringEquals:
+                "aws:SourceAccount":
+                  Fn::Sub: "${AWS::AccountId}"
+      Path: "/"
+      ManagedPolicyArns:
+        - Ref: ECSExpressTaskPolicy
+
+  # ECS Express
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName:
+        Ref: ClusterName
+  ECSExpress:
+    Type: AWS::ECS::ExpressGatewayService
+    Properties:
+      Cluster:
+        Ref: ECSCluster
+      ServiceName:
+        Ref: Servicename
+      InfrastructureRoleArn:
+        Fn::GetAtt: [ECSExpressInfraRole, Arn]
+      ExecutionRoleArn: # Task execution role
+        Fn::GetAtt: [ECSExpressTaskExecutionRole, Arn]
+      TaskRoleArn: # Task role
+        Fn::GetAtt: [ECSExpressTaskRole, Arn]
+      PrimaryContainer:
+        Image:
+          Fn::Sub: "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepositoryName}:latest"
+        ContainerPort: 5000
+        Secrets:
+          - Name: "POSTGRES_URL"
+            ValueFrom:
+              Fn::Sub: "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Servicename}/RDSPostgreSQL"
+      HealthCheckPath: "/"
+      Cpu: "0.25 vCPU"
+      Memory: "0.5 GB"
+      ScalingTarget:
+        AutoScalingMetric: REQUEST_COUNT_PER_TARGET
+        AutoScalingTargetValue: 100
+        MinTaskCount: 1
+        MaxTaskCount: 25
+      # NetworkConfiguration: # use default VPC
