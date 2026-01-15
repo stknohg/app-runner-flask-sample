@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: SAM Template for Lambda Web Adapter with Flask
+# ref : https://github.com/awslabs/aws-lambda-web-adapter/blob/main/examples/flask/template.yaml
+Globals:
+  Function:
+    Timeout: 10
+Resources:
+  LWAFlaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "lwa-my-flask-app"
+      PackageType: Image
+      MemorySize: 256
+      Events:
+        ApiEvent:
+          Type: HttpApi # Use API Gateway
+      Policies:
+        - Statement:
+          - Sid: "DynamoDB"
+            Effect: Allow
+            Action:
+              - "dynamodb:BatchGetItem"
+              - "dynamodb:GetShardIterator"
+              - "dynamodb:GetItem"
+              - "dynamodb:Scan"
+              - "dynamodb:Query"
+              - "dynamodb:GetRecords"
+            Resource:
+              Fn::Sub: "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/Employee"
+    Metadata:
+      Dockerfile: LWA_Dockerfile
+      DockerContext: ../
+      DockerTag: lwa-my-flask-app
+Outputs:
+  FlaskApi:
+    Description: "API Gateway endpoint URL for Prod stage for Flask function"
+    Value:
+      Fn::Sub: "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/"
+  FlaskFunction:
+    Description: "Flask Lambda Function ARN"
+    Value:
+      Fn::GetAtt: [LWAFlaskFunction, Arn]
+  FlaskIamRole:
+    Description: "Implicit IAM Role created for Flask function"
+    Value:
+      Fn::GetAtt: [LWAFlaskFunction, Arn]

@@ -23,3 +23,18 @@ To enable ECS Exec, run the following command and restart the task.
 # Enable ECS Exec
 aws ecs update-service --cluster my-cluster-express --service my-flask-app-express --enable-execute-command
 ```
+
+## Lambda Web Adapter template (template.yaml)
+
+We provide an Lambda Web Adapter template for comparison with App Runner.  
+Use AWS SAM CLI with `template.yaml` template.  
+
+This template is based on [AWS Lambda Web Adapter](https://github.com/awslabs/aws-lambda-web-adapter).  
+
+```bash
+#
+# Start AWS CloudShell
+#
+sam build
+sam deploy --guided
+```
