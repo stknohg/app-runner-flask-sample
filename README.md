@@ -15,7 +15,7 @@ aws ecr create-repository --repository-name 'my-flask-app'
 # 2. Create docker image
 git clone https://github.com/stknohg/app-runner-flask-sample.git --depth 1
 cd ./app-runner-flask-sample/
-docker build -t my-flask-app .
+docker build -t my-flask-app . --platform linux/amd64
 
 # 3. Push docker image to ECR
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
