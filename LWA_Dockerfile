@@ -1,0 +1,27 @@
+FROM python:3.14-slim-trixie
+ARG PIP_ROOT_USER_ACTION=ignore
+
+# Update runtime
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+ && apt-get distclean
+
+# Install Lambda Web Adapter v0.9.1.
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter
+
+# Set WORKDIR
+WORKDIR /var/task
+
+# Setup gunicorn
+RUN pip install --no-cache-dir gunicorn
+
+# Install application
+COPY "app/requirements.txt" "requirements.txt"
+RUN pip install --no-cache-dir -r "requirements.txt"
+COPY "app/*.py" "./"
+COPY "app/templates/*" "./templates/"
+COPY "app/static/*" "./static/"
+
+# Command settings
+ENV GUNICORN_CMD_ARGS="--bind=:8080 --workers=1"
+CMD ["/usr/local/bin/gunicorn", "app:app"]
