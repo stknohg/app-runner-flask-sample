@@ -1,13 +1,7 @@
-# Define global arguments
+FROM python:3.14-slim-trixie
 ARG APP_DIR="/app"
 
-#
-# Build image
-#
-FROM python:3.14-slim-trixie
-ARG APP_DIR
-
-# Update runtime dependencies
+# Update runtime
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
  && apt-get distclean
