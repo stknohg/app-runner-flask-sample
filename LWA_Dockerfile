@@ -6,8 +6,8 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends \
  && apt-get distclean
 
-# Install Lambda Web Adapter v0.9.1.
-COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter
+# Install Lambda Web Adapter v1.0.0.
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:1.0.0 /lambda-adapter /opt/extensions/lambda-adapter
 
 # Set WORKDIR
 WORKDIR /var/task
